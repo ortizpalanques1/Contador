@@ -3,11 +3,15 @@ library(shiny)
 library(lubridate)
 library(tidyverse)
 library(rlang)
-#https://stackoverflow.com/questions/58125191/update-shiny-output-from-for-loop-inside-observeevent-using-reactivevalues
+library(beepr)
 
 #Functions#  
 time_of_the_day <- function() {
   Sys.time()
+}
+
+cuenta_ciclo <- function(text, number_1, number_2){
+  as.numeric(get(paste0(text,number_1))) - as.numeric(get(paste0(text,number_2)))
 }
 
 
@@ -94,11 +98,12 @@ server <- function(input, output, session) {
   # observer that invalidates every second. If timer is active, decrease by one.
   guardar <- reactiveValues()
   observe({
-    invalidateLater(3600000, session)
+    invalidateLater(10000, session)
     isolate({
+      
       #Valores iniciales#
-      valor_0 <- 0
-      valores_0 <- c(rep(0,3))
+      valor_0 <<- 0
+      valores_0 <<- c(rep(0,3))
       
       #Recoger datos#
       el_que_es <- sum( x(), y(), z())
@@ -112,9 +117,9 @@ server <- function(input, output, session) {
       assign(paste0('valor_', h()), el_que_es, envir = .GlobalEnv)
       assign(paste0("valores_",h()), aqui_estamos_todos, envir = .GlobalEnv)
       
-      #Obtener los valores del ciclo: diferencia entre los valores totoale sy los del ciclo anterior#
-      el_que_sera <<- as.numeric(get(paste0("valor_",h()))) - as.numeric(get(paste0("valor_",t)))
-      los_que_seran <<- as.numeric(get(paste0("valores_",h()))) - as.numeric(get(paste0("valores_",t)))
+      #Obtener los valores del ciclo: diferencia entre los valores totales y los del ciclo anterior#
+      el_que_sera <<- cuenta_ciclo("valor_", h(), t)
+      los_que_seran <<- cuenta_ciclo("valores_", h(), t)
       assign(paste0("cada_hora_", t), los_que_seran, envir = .GlobalEnv)
       
       #Crear data frames#
@@ -148,6 +153,7 @@ server <- function(input, output, session) {
       #     labs(title = paste0("Total items in hour ", h(), " = ", el_que_es))
       #   este_plot
       # })
+      if(t >= 1){beep(2)}
     })
   })
   

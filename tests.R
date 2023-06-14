@@ -28,3 +28,11 @@ el_todo_f(4, 5, 6)
 the_items <- c("Normal Items", "TnS", "MSR")
 item_names <- factor(the_items, levels = c("Normal Items", "TnS", "MSR"))
 
+#Probar funcion
+#Original
+as.numeric(get(paste0("valor_",h()))) - as.numeric(get(paste0("valor_",t)))
+
+cuenta_ciclo <- function(text, number_1, number_2){
+  as.numeric(get(paste0(text,number_1()))) - as.numeric(get(paste0(text,number_2)))
+  return()
+}
